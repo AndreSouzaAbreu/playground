@@ -36,6 +36,7 @@ int main(int argc, char** argv)
     I = 0;
     while (TEXT[I] != 0)
     {
+        printf("I=%d D=%d IR=%c DR=%d\n", I, D, TEXT[I], (int) DATA[D]);
         if (TEXT[I] == '+') {
             DATA[D] += 1;
         } else if (TEXT[I] == '-') {
