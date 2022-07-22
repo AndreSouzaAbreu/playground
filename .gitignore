@@ -6,6 +6,7 @@
 
 # ignore compiled assets
 *.o
+*.obj
 *.out
 *.class
 
@@ -23,12 +24,18 @@
 *.zip
 *.7z
 
-# media files
+# ignore media files
 *.mp4
 *.mkv
 *.webm
 
-# documents
+# ignore images
+*.png
+*.svg
+*.jpg
+*.jpeg
+
+# ignore documents
 *.pdf
 *.docx
 
@@ -48,12 +55,15 @@ Rplots.pdf
 *.synctex.gz
 _minted-*
 
-# cache and vendor
-__pycache__
+# ignore project dependencies
 node_modules
 vendor
 
-# editor files
+# ignore cache files
+__pycache__
+
+# ignore editor files
 .idea
 .vim
 .vscode
+tags
