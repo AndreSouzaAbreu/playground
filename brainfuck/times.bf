@@ -5,4 +5,4 @@
   <[->+<]     // restore A by moving TMP to where A was
   >>>         // move to where B is
 ]             // finish loop
-<.            // move data pointer to C, then prints it
+<.            // move data pointer to C then prints it
