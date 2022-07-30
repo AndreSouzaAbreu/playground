@@ -12,7 +12,7 @@ int op_priority(char op)
 {
     if (op == '+' || op == '-')
         return 0;
-    if (op == '*' || op == '*')
+    if (op == '*' || op == '/')
         return 1;
     printf("erro aqui na op priority...\n");
     exit(1);
@@ -37,43 +37,126 @@ int eval(int a, int b, char op)
     exit(1);
 }
 
-int eval_infix(char* expr, int maxi, int i)
+int eval_infix(char* expr, int maxi)
 {
-    int a, b, r;
+    int st1[50];
+    char st2[50];
+    int a, b, r, i, j, t1, t2;
     char op, nextop;
 
-    if (maxi == i)
-        return (int) expr[i] - '0';
 
-    a = (int) (expr[i] - '0');
-    b = (int) (expr[i+2] - '0');
-    op = expr[i+1];
-
-    if (i+2 >= maxi)
+    i= 0;
+    a = 0;
+    t1 = t2 = -1;
+    // printf("i=%d maxi=%d\n", i, maxi);
+    while (i <= maxi)
     {
-        r = eval(a, b, op);
-        return r;
+
+        // printf("st1: ");
+        // for (int k = 0; k <= t1; k+=1) {
+        //     printf("%d ", st1[k]);
+        // }
+        // printf("\n");
+        // printf("st2: ");
+        // for (int k = 0; k <= t2; k+=1) {
+        //     printf("%c ", st2[k]);
+        // }
+        // printf("\n");
+ 
+        if (a == 0)
+        {
+            while ('0' <= expr[i] && expr[i] <= '9')
+            {
+                a = a*10 + (int) (expr[i] - '0');
+                i += 1;
+            }
+
+            if (i > maxi)
+            {
+                t1 += 1;
+                st1[t1] = a;
+                break;
+            }
+        }
+
+        op = expr[i];
+        i += 1;
+
+        j = 0;
+        b = 0;
+        while ('0' <= expr[i] && expr[i] <= '9')
+        {
+            b = b*10 + (int) (expr[i] - '0');
+            i += 1;
+            j += 1;
+        }
+
+        if (i > maxi)
+        {
+            r = eval(a, b, op);
+            t1 += 1;
+            st1[t1] = r;
+            break;
+        }
+
+        nextop = expr[i];
+        int cmp = op_cmp(op, nextop);
+
+        if (cmp == 0)
+        {
+            a = eval(a, b, op);
+            continue;
+        }
+
+        if (cmp > 0)
+        {
+            r = eval(a, b, op);
+            t1 += 1;
+            st1[t1] = r;
+            t2 += 1;
+            st2[t2] = nextop;
+            i += 1;
+        } else {
+            t1 += 1;
+            st1[t1] = a;
+            t2 += 1;
+            st2[t2] = op;
+            i -= j;
+        }
+        a = 0;
     }
 
-    nextop = expr[i+3];
-    if (op_cmp(op, nextop) >= 0)
+    // printf("st1: ");
+    // for (int k = 0; k <= t1; k+=1) {
+    //     printf("%d ", st1[k]);
+    // }
+    // printf("\n");
+    // printf("st2: ");
+    // for (int k = 0; k <= t2; k+=1) {
+    //     printf("%c ", st2[k]);
+    // }
+    // printf("\n");
+
+    r = st1[0];
+    i = 1, j=0;
+    while (j <= t2 && i <= t1)
     {
-        a = eval(a, b, op);
-        b = eval_infix(expr, maxi, i+4);
-        r = eval(a, b, nextop);
-        return r;
-    } else {
-        b = eval_infix(expr, maxi, i+2);
-        r = eval(a, b, op);
-        return r;
-    }
+        b = st1[i];
+        op = st2[j];
+        r = eval(r, b, op);
+        i += 1;
+        j += 1;
+    } 
+
+    return r;
 }
 
 int main()
 {
     char c, *expression;
     const size_t expect_read = 1;
-    int len, result;
+    int len;
+    int result;
 
     expression = malloc(MAXSIZE*sizeof(char));
     len = 0;
@@ -89,7 +172,7 @@ int main()
     }
     expression[len] = '\0';
 
-    result = eval_infix(expression, len-1, 0);
+    result = eval_infix(expression, len-1);
     printf("%d\n", result);
 
     return 0;
